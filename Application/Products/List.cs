@@ -12,11 +12,11 @@ namespace Application.Products
 {
     public class List
     {
-        public class Query: IRequest<List<Product>>
+        public class Query: IRequest<IEnumerable<Product>>
         {
 
         }
-        public class Handler : IRequestHandler<Query, List<Product>>
+        public class Handler : IRequestHandler<Query, IEnumerable<Product>>
         {
             private readonly NorthwindContext _context;
 
@@ -25,7 +25,7 @@ namespace Application.Products
                 _context = context;
             }
 
-            public async Task<List<Product>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<IEnumerable<Product>> Handle(Query request, CancellationToken cancellationToken)
             {
                 return await _context.Products.ToListAsync();
             }

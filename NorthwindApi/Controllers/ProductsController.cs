@@ -27,14 +27,19 @@ namespace NorthwindApi.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             //if (_context.Products == null)
             //{
             //    return NotFound();
             //}
             //  return await _context.Products.ToListAsync();
-            return await _mediator.Send(new Query());
+            var products = await _mediator.Send(new Query());
+            if (products == null)
+            {
+                return NotFound();
+            }
+            return Ok(products);
         }
 
         // GET: api/Products/5
