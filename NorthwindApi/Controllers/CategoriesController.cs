@@ -9,6 +9,7 @@ using Domain;
 using Persistence;
 using MediatR;
 using static Application.Categories.Create;
+using static Application.Categories.List;
 
 namespace NorthwindApi.Controllers
 {
@@ -29,27 +30,19 @@ namespace NorthwindApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-          if (_context.Categories == null)
-          {
-              return NotFound();
-          }
-            return await _context.Categories.ToListAsync();
+            var categories = await _mediator.Send(new Query());
+            if (categories == null)
+            {
+                return NotFound();
+            }
+            return Ok(categories);
         }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
-          if (_context.Categories == null)
-          {
-              return NotFound();
-          }
-            var category = await _context.Categories.FindAsync(id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
+            var category = await _mediator.Send(new Application.Categories.Detail.Query() { Id = id });
 
             return category;
         }
@@ -64,25 +57,28 @@ namespace NorthwindApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(category).State = EntityState.Modified;
+            //_context.Entry(category).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //try
+            //{
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (DbUpdateConcurrencyException)
+            //{
+            //    if (!CategoryExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
-            return NoContent();
+            //return NoContent();
+
+            var response = await _mediator.Send(new Application.Categories.Edit.Command() { Category = category });
+            return Ok(response);
         }
 
         // POST: api/Categories
@@ -98,20 +94,23 @@ namespace NorthwindApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            if (_context.Categories == null)
-            {
-                return NotFound();
-            }
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            //if (_context.Categories == null)
+            //{
+            //    return NotFound();
+            //}
+            //var category = await _context.Categories.FindAsync(id);
+            //if (category == null)
+            //{
+            //    return NotFound();
+            //}
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+            //_context.Categories.Remove(category);
+            //await _context.SaveChangesAsync();
 
-            return NoContent();
+            //return NoContent();
+            var response = await _mediator.Send(new Application.Categories.Delete.Command() { Id = id });
+
+            return Ok(response);
         }
 
         private bool CategoryExists(int id)
