@@ -1,3 +1,4 @@
+using Application.Core;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,6 +52,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddMediatR(typeof(Application.Products.List.Handler));
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 var app = builder.Build();
 

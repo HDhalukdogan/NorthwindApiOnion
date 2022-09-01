@@ -1,4 +1,7 @@
-﻿using Domain;
+﻿using Application.Core;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -12,22 +15,29 @@ namespace Application.Products
 {
     public class List
     {
-        public class Query: IRequest<IEnumerable<Product>>
+        public class Query : IRequest<Result<PagedList<ProductDto>>>
         {
-
+            public ProductParams Params { get; set; }
         }
-        public class Handler : IRequestHandler<Query, IEnumerable<Product>>
+        public class Handler : IRequestHandler<Query, Result<PagedList<ProductDto>>>
         {
             private readonly NorthwindContext _context;
+            private readonly IMapper _mapper;
 
-            public Handler(NorthwindContext context)
+            public Handler(NorthwindContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<IEnumerable<Product>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<PagedList<ProductDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _context.Products.ToListAsync();
+                var query = _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).AsQueryable();
+                if (request.Params.Search != null)
+                {
+                    query = query.Where(p => p.ProductName.ToLower().Contains(request.Params.Search.Trim().ToLower()));
+                }
+                return Result<PagedList<ProductDto>>.Success(await PagedList<ProductDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize));
             }
         }
     }

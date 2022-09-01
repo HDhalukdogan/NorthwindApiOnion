@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Categories
+namespace Application.Products
 {
     public class Delete
     {
@@ -27,8 +27,8 @@ namespace Application.Categories
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == request.Id);
-                _context.Remove(category);
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == request.Id);
+                _context.Remove(product);
                 await _context.SaveChangesAsync();
                 return Result<Unit>.Success(Unit.Value);
             }

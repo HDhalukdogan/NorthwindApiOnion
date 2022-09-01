@@ -10,6 +10,8 @@ using Persistence;
 using MediatR;
 using static Application.Categories.Create;
 using static Application.Categories.List;
+using Application.Core;
+using Application.Categories;
 
 namespace NorthwindApi.Controllers
 {
@@ -28,7 +30,7 @@ namespace NorthwindApi.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        public async Task<IActionResult> GetCategories()
         {
             var categories = await _mediator.Send(new Query());
             if (categories == null)
@@ -40,7 +42,7 @@ namespace NorthwindApi.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        public async Task<ActionResult<Result<CategoryDto>>> GetCategory(int id)
         {
             var category = await _mediator.Send(new Application.Categories.Detail.Query() { Id = id });
 
