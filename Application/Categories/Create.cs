@@ -1,5 +1,6 @@
 ﻿using Application.Core;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Persistence;
 using System;
@@ -16,7 +17,13 @@ namespace Application.Categories
         {
             public Category Category { get; set; }
         }
-
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Category).SetValidator(new CategoryValidator());
+            }
+        }
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly NorthwindContext _context;
