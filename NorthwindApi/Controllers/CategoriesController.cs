@@ -15,38 +15,26 @@ using Application.Categories;
 
 namespace NorthwindApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CategoriesController : ControllerBase
-    {
-        private readonly NorthwindContext _context;
-        private readonly IMediator _mediator;
 
-        public CategoriesController(NorthwindContext context, IMediator mediator)
-        {
-            _context = context;
-            _mediator = mediator;
-        }
+    public class CategoriesController : BaseApiController
+    {
+
 
         // GET: api/Categories
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
-            var categories = await _mediator.Send(new Query());
-            if (categories == null)
-            {
-                return NotFound();
-            }
-            return Ok(categories);
+            return HandleResult(await Mediator.Send(new Query()));
+
         }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Result<CategoryDto>>> GetCategory(int id)
         {
-            var category = await _mediator.Send(new Application.Categories.Detail.Query() { Id = id });
+            return HandleResult(await Mediator.Send(new Application.Categories.Detail.Query() { Id = id }));
 
-            return category;
+
         }
 
         // PUT: api/Categories/5
@@ -59,28 +47,9 @@ namespace NorthwindApi.Controllers
                 return BadRequest();
             }
 
-            //_context.Entry(category).State = EntityState.Modified;
 
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!CategoryExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
+            return HandleResult(await Mediator.Send(new Application.Categories.Edit.Command() { Category = category }));
 
-            //return NoContent();
-
-            var response = await _mediator.Send(new Application.Categories.Edit.Command() { Category = category });
-            return Ok(response);
         }
 
         // POST: api/Categories
@@ -88,36 +57,19 @@ namespace NorthwindApi.Controllers
         [HttpPost]
         public async Task<IActionResult> PostCategory(Category category)
         {
-            var response = await _mediator.Send(new Command() { Category = category });
-            return Ok(response);
+            return HandleResult( await Mediator.Send(new Command() { Category = category }));
+             
         }
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            //if (_context.Categories == null)
-            //{
-            //    return NotFound();
-            //}
-            //var category = await _context.Categories.FindAsync(id);
-            //if (category == null)
-            //{
-            //    return NotFound();
-            //}
 
-            //_context.Categories.Remove(category);
-            //await _context.SaveChangesAsync();
+            return HandleResult( await Mediator.Send(new Application.Categories.Delete.Command() { Id = id }));
 
-            //return NoContent();
-            var response = await _mediator.Send(new Application.Categories.Delete.Command() { Id = id });
-
-            return Ok(response);
+             
         }
 
-        private bool CategoryExists(int id)
-        {
-            return (_context.Categories?.Any(e => e.CategoryId == id)).GetValueOrDefault();
-        }
     }
 }

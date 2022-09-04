@@ -58,6 +58,7 @@ builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddMediatR(typeof(Application.Products.List.Handler));
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -67,6 +68,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors(opt =>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000", "http://localhost:4200");
+});
 app.UseAuthentication();
 app.UseAuthorization();
 
