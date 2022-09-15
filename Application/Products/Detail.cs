@@ -32,7 +32,7 @@ namespace Application.Products
 
             public async Task<Result<ProductDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var response = await _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(c => c.ProductId == request.Id, cancellationToken: cancellationToken);
+                var response = await _context.Products.Include(p=>p.Category).ProjectTo<ProductDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(c => c.ProductId == request.Id, cancellationToken: cancellationToken);
                 return Result<ProductDto>.Success(response);
             }
         }

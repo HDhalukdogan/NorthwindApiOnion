@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.Categories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,5 +19,6 @@ namespace Application.Products
         public short? UnitsOnOrder { get; set; }
         public short? ReorderLevel { get; set; }
         public bool Discontinued { get; set; }
+        public CategoryDto? Category { get; set; }
     }
 }
