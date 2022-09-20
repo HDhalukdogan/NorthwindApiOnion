@@ -30,27 +30,11 @@ namespace NorthwindApi.Controllers
 
             IdentityResult result = await _userManager.CreateAsync(user, registerDto.Password);
 
+            if (!result.Succeeded) return BadRequest(result);
+
             await _userManager.AddToRoleAsync(user, "member");
 
-            //if (result.Succeeded)
-            //{
-            //    string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            //    string link = Url.Action("ConfirmEmail", "Home", new
-            //    {
-            //        userId = user.Id,
-            //        token = confirmationToken
-            //    }, protocol: HttpContext.Request.Scheme
-
-            //    );
-
-            //    EmailHelper.EmailConfirmationSendEmail(link, user.Email);
-
-            //}
-            //else
-            //{
-            //    //throw exception
-            //}
 
             return StatusCode(201);
         }
@@ -58,6 +42,10 @@ namespace NorthwindApi.Controllers
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Name);
+            if (user == null)
+            {
+                user = await _userManager.FindByEmailAsync(loginDto.Name);
+            }
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
                 return Unauthorized();
 
