@@ -11,15 +11,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Categories
+namespace Application.Suppliers
 {
-    public class Detail
+    public class List
     {
-        public class Query : IRequest<Result<CategoryDto>>
+        public class Query : IRequest<Result<IEnumerable<SupplierDto>>>
         {
-            public int Id { get; set; }
+
         }
-        public class Handler : IRequestHandler<Query, Result<CategoryDto>>
+        public class Handler : IRequestHandler<Query, Result<IEnumerable<SupplierDto>>>
         {
             private readonly NorthwindContext _context;
             private readonly IMapper _mapper;
@@ -30,10 +30,10 @@ namespace Application.Categories
                 _mapper = mapper;
             }
 
-            public async Task<Result<CategoryDto>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<IEnumerable<SupplierDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var category = await _context.Categories.ProjectTo<CategoryDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(c => c.CategoryId == request.Id);
-                return Result<CategoryDto>.Success(category);
+                var response = await _context.Suppliers.ProjectTo<SupplierDto>(_mapper.ConfigurationProvider).ToListAsync();
+                return Result<IEnumerable<SupplierDto>>.Success(response);
             }
         }
     }

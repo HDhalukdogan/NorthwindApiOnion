@@ -1,5 +1,7 @@
 ﻿using Application.Categories;
+using Application.Orders;
 using Application.Products;
+using Application.Suppliers;
 using AutoMapper;
 using Domain;
 using System;
@@ -14,8 +16,13 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
-            CreateMap<Category, CategoryDto>().ReverseMap();
-            CreateMap<Product, ProductDto>().ReverseMap();
+            CreateMap<Category, CategoryDto>();
+            CreateMap<Product, ProductDto>()
+                .ForMember(d => d.CategoryName, s => s.MapFrom(c => c.Category.CategoryName))
+                .ForMember(d => d.SupplierName, s => s.MapFrom(c => c.Supplier.CompanyName));
+            CreateMap<Supplier, SupplierDto>();
+            CreateMap<Order, OrderDto>();
+            CreateMap<OrderDetail, OrderDetailDto>();
         }
     }
 }

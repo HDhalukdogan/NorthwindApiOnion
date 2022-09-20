@@ -7,47 +7,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain;
 using Persistence;
+using static Application.Suppliers.List;
+using static Application.Suppliers.Create;
+using Application.Suppliers;
 
 namespace NorthwindApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SuppliersController : ControllerBase
+    public class SuppliersController : BaseApiController
     {
-        private readonly NorthwindContext _context;
-
-        public SuppliersController(NorthwindContext context)
-        {
-            _context = context;
-        }
-
         // GET: api/Suppliers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers()
+        public async Task<ActionResult<IEnumerable<SupplierDto>>> GetSuppliers()
         {
-          if (_context.Suppliers == null)
-          {
-              return NotFound();
-          }
-            return await _context.Suppliers.ToListAsync();
+            return HandleResult(await Mediator.Send(new Query()));
         }
 
         // GET: api/Suppliers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Supplier>> GetSupplier(int id)
+        public async Task<ActionResult<SupplierDto>> GetSupplier(int id)
         {
-          if (_context.Suppliers == null)
-          {
-              return NotFound();
-          }
-            var supplier = await _context.Suppliers.FindAsync(id);
-
-            if (supplier == null)
-            {
-                return NotFound();
-            }
-
-            return supplier;
+            return HandleResult(await Mediator.Send(new Application.Suppliers.Detail.Query() { Id = id }));
         }
 
         // PUT: api/Suppliers/5
@@ -60,25 +41,7 @@ namespace NorthwindApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(supplier).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SupplierExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return HandleResult(await Mediator.Send(new Application.Suppliers.Edit.Command() { Supplier = supplier }));
         }
 
         // POST: api/Suppliers
@@ -86,39 +49,14 @@ namespace NorthwindApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Supplier>> PostSupplier(Supplier supplier)
         {
-          if (_context.Suppliers == null)
-          {
-              return Problem("Entity set 'NorthwindContext.Suppliers'  is null.");
-          }
-            _context.Suppliers.Add(supplier);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSupplier", new { id = supplier.SupplierId }, supplier);
+            return HandleResult(await Mediator.Send(new Command() { Supplier = supplier }));
         }
 
         // DELETE: api/Suppliers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSupplier(int id)
         {
-            if (_context.Suppliers == null)
-            {
-                return NotFound();
-            }
-            var supplier = await _context.Suppliers.FindAsync(id);
-            if (supplier == null)
-            {
-                return NotFound();
-            }
-
-            _context.Suppliers.Remove(supplier);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool SupplierExists(int id)
-        {
-            return (_context.Suppliers?.Any(e => e.SupplierId == id)).GetValueOrDefault();
+            return HandleResult(await Mediator.Send(new Application.Suppliers.Delete.Command() { Id = id }));
         }
     }
 }

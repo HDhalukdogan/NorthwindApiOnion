@@ -19,6 +19,7 @@ namespace Application.Products
         public short? UnitsOnOrder { get; set; }
         public short? ReorderLevel { get; set; }
         public bool Discontinued { get; set; }
-        public CategoryDto? Category { get; set; }
+        public string? CategoryName { get; set; }
+        public string? SupplierName { get; set; }
     }
 }

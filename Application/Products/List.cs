@@ -32,11 +32,20 @@ namespace Application.Products
 
             public async Task<Result<PagedList<ProductDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _context.Products.Include(p=>p.Category).ProjectTo<ProductDto>(_mapper.ConfigurationProvider).AsQueryable();
+                var query = _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).AsQueryable();
                 if (request.Params.Search != null)
                 {
                     query = query.Where(p => p.ProductName.ToLower().Contains(request.Params.Search.Trim().ToLower()));
                 }
+                if (request.Params.CategoryId != null)
+                {
+                    query = query.Where(p => p.CategoryId == request.Params.CategoryId);
+                }
+                if (request.Params.SupplierId != null)
+                {
+                    query = query.Where(p => p.SupplierId == request.Params.SupplierId);
+                }
+
                 return Result<PagedList<ProductDto>>.Success(await PagedList<ProductDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize));
             }
         }

@@ -10,5 +10,7 @@ namespace Application.Products
     public class ProductParams : PagingParams
     {
         public string? Search { get; set; }
+        public int? CategoryId { get; set; }
+        public int? SupplierId { get; set; }
     }
 }

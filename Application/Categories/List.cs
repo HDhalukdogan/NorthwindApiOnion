@@ -32,7 +32,7 @@ namespace Application.Categories
 
             public async Task<Result<IEnumerable<CategoryDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var response = await _context.Categories.Include(c => c.Products).ProjectTo<CategoryDto>(_mapper.ConfigurationProvider).ToListAsync();
+                var response = await _context.Categories.ProjectTo<CategoryDto>(_mapper.ConfigurationProvider).ToListAsync();
                 return Result<IEnumerable<CategoryDto>>.Success(response);
             }
         }
