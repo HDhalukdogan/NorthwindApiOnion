@@ -7,6 +7,9 @@ import { useAppDispatch } from "../store/configureStore";
 import { fetchCurrentUser } from "../../features/account/accountSlice";
 import { PrivateRoute } from './PrivateRoute';
 import Product from '../../features/product/Product';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Roles from '../../features/admin/Roles';
 function App() {
   const dispatch = useAppDispatch();
 
@@ -19,7 +22,7 @@ function App() {
   }, [dispatch])
 
   useEffect(() => {
-    initApp().then(() => console.log('user fetched'));
+    initApp();
   }, [initApp])
   return (
     <div className="App">
@@ -31,7 +34,12 @@ function App() {
           path="product"
           element={<PrivateRoute roles={["admin"]} component={Product} />}
         />
+        <Route
+          path="roles"
+          element={<PrivateRoute roles={["admin"]} component={Roles} />}
+        />
       </Routes>
+      <ToastContainer position='bottom-right' hideProgressBar theme='colored' />
     </div>
   );
 }

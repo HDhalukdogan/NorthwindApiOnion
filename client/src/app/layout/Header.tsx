@@ -60,6 +60,14 @@ export default function Header() {
                         >
                             INVENTORY
                         </ListItem>}
+                    {user && user.roles?.includes('admin') &&
+                        <ListItem
+                            component={NavLink}
+                            to={'/roles'}
+                            sx={navStyles}
+                        >
+                            ROLES
+                        </ListItem>}
                 </List>
                 <Box display='flex' alignItems='center'>
                     {user ? (

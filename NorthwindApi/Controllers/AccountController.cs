@@ -108,7 +108,7 @@ namespace NorthwindApi.Controllers
             return Ok(await _userManager.GetRolesAsync(user));
         }
         [HttpPost("add-role-user/{username}")]
-        public async Task<IActionResult> AddRoleToUser(string username, [FromBody] string role)
+        public async Task<IActionResult> AddRoleToUser(string username, [FromQuery] string role)
         {
 
             var user = await _userManager.FindByNameAsync(username);
@@ -123,7 +123,7 @@ namespace NorthwindApi.Controllers
             return Ok(await _userManager.GetRolesAsync(user));
         }
         [HttpPost("remove-role-user/{username}")]
-        public async Task<IActionResult> RemoveRoleFromUser(string username, [FromBody] string role)
+        public async Task<IActionResult> RemoveRoleFromUser(string username, [FromQuery] string role)
         {
 
             var user = await _userManager.FindByNameAsync(username);

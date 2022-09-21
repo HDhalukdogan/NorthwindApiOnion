@@ -1,5 +1,7 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAppSelector } from "../store/configureStore";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../store/configureStore";
+import { toast } from 'react-toastify';
+import { fetchCurrentUser } from "../../features/account/accountSlice";
  
 
 interface Props {
@@ -10,14 +12,16 @@ interface Props {
 export const  PrivateRoute: React.FC<Props> = ({ component: RouteComponent, roles }) => {
   const location = useLocation();
   const { user } = useAppSelector((state) => state.account);
+  const dispatch = useAppDispatch();
   const userHasRequiredRole = user && roles?.some(r => user?.roles?.includes(r)) ? true : false;
+  if (!user) {
+     dispatch(fetchCurrentUser());
+  }
   if (!user) {
     return <Navigate replace to="/login" state={{ from: location }} />
    } 
-  if (!roles&&user) {
-      return <RouteComponent />
-  }
-  if (!userHasRequiredRole) {
+  if (roles&&!userHasRequiredRole) {
+    toast.error('You are not Authorized!');
     return <Navigate replace to="/"/>
   }
   return <RouteComponent />
