@@ -39,9 +39,14 @@ const Account = {
 }
 
 const Admin = {
-    roles: () => request.get('account/roles-with-users'),
+    rolesWithUsers: () => request.get('account/roles-with-users'),
+    usersWithRoles: () => request.get('account/users-with-roles'),
+    roles: () => request.get('account/getAllRoles'),
     createRole: (value: any) => request.post(`account/createrole?roleName=${value}`,{}),
-    removeUserFromRoles: (username: string, value: any) => request.post(`account/remove-role-user/${username}?role=${value}`, {})
+    deleteRole: (value: any) => request.delete(`account/deleterole/${value}`),
+    removeUserFromRoles: (username: string, value: any) => request.post(`account/remove-role-user/${username}?role=${value}`, {}),
+    editRoles: (username: string, value: any) => request.post(`account/edit-roles/${username}?roles=${value}`, {}),
+    updateRole: (roleName: string, value: any) => request.put(`account/updaterole/${roleName}?updatedName=${value}`, {})
 }
 
 const agent = {

@@ -72,6 +72,45 @@ namespace NorthwindApi.Controllers
 
             return StatusCode(201);
         }
+        [HttpDelete("deleterole/{roleName}")]
+        public async Task<IActionResult> DeleteRole(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role == null)
+            {
+                return NotFound();
+            }
+            var result = await _roleManager.DeleteAsync(role);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+                return ValidationProblem();
+            }
+            return StatusCode(201);
+        }
+        [HttpPut("updaterole/{roleName}")]
+        public async Task<IActionResult> UpdateRole(string roleName,string updatedName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role == null)
+            {
+                return NotFound();
+            }
+            role.Name = updatedName;
+            var result = await _roleManager.UpdateAsync(role);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+                return ValidationProblem();
+            }
+            return StatusCode(201);
+        }
         [Authorize]
         [HttpGet("currentUser")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
@@ -84,6 +123,13 @@ namespace NorthwindApi.Controllers
                 Email = user.Email,
                 Token = await _tokenService.GenerateToken(user),
             };
+        }
+        [HttpGet("getAllRoles")]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            var roles = _roleManager.Roles.Select(r => r.Name).ToList();
+            return Ok(roles);
+
         }
         //[Authorize(Roles ="admin")]
         [HttpPost("edit-roles/{username}")]

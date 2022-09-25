@@ -10,6 +10,7 @@ import Product from '../../features/product/Product';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Roles from '../../features/admin/Roles';
+import UsersWR from '../../features/admin/UsersWR';
 function App() {
   const dispatch = useAppDispatch();
 
@@ -37,6 +38,10 @@ function App() {
         <Route
           path="roles"
           element={<PrivateRoute roles={["admin"]} component={Roles} />}
+        />
+        <Route
+          path="users"
+          element={<PrivateRoute roles={["admin"]} component={UsersWR} />}
         />
       </Routes>
       <ToastContainer position='bottom-right' hideProgressBar theme='colored' />

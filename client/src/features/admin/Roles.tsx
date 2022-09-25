@@ -22,23 +22,35 @@ export default function Roles() {
     const [role, setRole] = useState<RoleModel | null>(null);
     const [open, setOpen] = React.useState(false);
     const [openCreate, setOpenCreate] = React.useState(false);
+    const [openEdit, setOpenEdit] = React.useState(false);
     const [term, setTerm] = useState('');
     const handleOpen = (role: RoleModel) => {
         setRole(role);
         setOpen(true);
     }
+    const handleOpenEdit = (role: RoleModel) => {
+        setRole(role);
+        setOpenEdit(true);
+    }
+    const handleCloseEdit = (role: any) => {
+        agent.Admin.updateRole(role, term).then(() => setOpenEdit(false));
+    }
     const handleClose = () => {
         setRole(null);
         setOpen(false);
     }
-    const handleCloseCreate = () =>{
+    const handleCloseCreate = () => {
         setTerm('');
-        agent.Admin.createRole(term);
-        setOpenCreate(false)
+        agent.Admin.createRole(term).then(() => setOpenCreate(false));
+
+    }
+    const onClick = (role: any) => {
+        agent.Admin.deleteRole(role).then(() => agent.Admin.rolesWithUsers().then(response => setRoles(response)).catch(error => console.log(error)))
     }
     useEffect(() => {
-        agent.Admin.roles().then(response => setRoles(response)).catch(error => console.log(error));
-    },[open,openCreate])
+        agent.Admin.rolesWithUsers().then(response => setRoles(response)).catch(error => console.log(error));
+    }, [open, openCreate, openEdit]);
+
     if (!roles) {
         return <h1>Roles can not fetched</h1>
     }
@@ -51,7 +63,9 @@ export default function Roles() {
                         <TableRow>
                             <TableCell align='center'>#</TableCell>
                             <TableCell align="center">Role Name</TableCell>
+                            <TableCell align="center">Edit</TableCell>
                             <TableCell align="center">Role Users</TableCell>
+                            <TableCell align="center">Delete</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -65,7 +79,13 @@ export default function Roles() {
                                 </TableCell>
                                 <TableCell align="center">{role.role}</TableCell>
                                 <TableCell align="center">
+                                    <Button onClick={() => handleOpenEdit(role)}>Edit</Button>
+                                </TableCell>
+                                <TableCell align="center">
                                     <Button onClick={() => handleOpen(role)}>View</Button>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <DeleteForeverIcon onClick={() => onClick(role.role)} />
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -113,6 +133,25 @@ export default function Roles() {
                     <Button onClick={handleCloseCreate} >Create New</Button>
                     <Button onClick={() => setOpenCreate(false)}>Cancel</Button>
 
+                </Box>
+            </Modal>
+
+            <Modal
+                open={openEdit}
+                onClose={() => setOpenEdit(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Role Name: {role?.role}
+                    </Typography>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Edit Role
+                    </Typography>
+                    <Input type='text' placeholder='Role' defaultValue={role?.role} onChange={(e) => setTerm(e.target.value)} />
+                    <Button onClick={() => handleCloseEdit(role?.role)} >Edit</Button>
+                    <Button onClick={() => setOpenEdit(false)}>Cancel</Button>
                 </Box>
             </Modal>
 
