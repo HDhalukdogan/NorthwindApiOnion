@@ -6,11 +6,11 @@ import Header from './Header';
 import { useAppDispatch } from "../store/configureStore";
 import { fetchCurrentUser } from "../../features/account/accountSlice";
 import { PrivateRoute } from './PrivateRoute';
-import Product from '../../features/product/Product';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Roles from '../../features/admin/Roles';
 import UsersWR from '../../features/admin/UsersWR';
+import Catalog from '../../features/catalog/Catalog';
 function App() {
   const dispatch = useAppDispatch();
 
@@ -33,7 +33,7 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route
           path="product"
-          element={<PrivateRoute roles={["admin"]} component={Product} />}
+          element={<PrivateRoute roles={["admin"]} component={Catalog} />}
         />
         <Route
           path="roles"

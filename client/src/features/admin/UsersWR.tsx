@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Modal, Box, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText } from '@mui/material';
+import { Table, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Modal, Box, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, FormControlLabel } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import agent from '../../app/api/agent'
 import { UserWithRoles } from '../../app/models/usersWithRoles';
@@ -43,13 +43,13 @@ export default function UsersWR() {
     }, [open, user])
 
     const submitForm = async (data: FieldValues) => {
+        console.log('data', data)
         let newData = Object.entries(data).filter(s => s[1] === true).map(r => r[0])
-        console.log( data)
-        await agent.Admin.editRoles(user!.username, newData)
-        setUser(null);
-        data = {};
-        setOpen(false);
 
+        await agent.Admin.editRoles(user!.username, newData).then(() => {
+            handleClose();
+        })
+        console.log('data', data)
     }
 
     if (!users) {
@@ -90,11 +90,11 @@ export default function UsersWR() {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
+                <Box component="form" onSubmit={handleSubmit(submitForm)} sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         User Name: {user?.username}
                     </Typography>
-                    <List component="form" onSubmit={handleSubmit(submitForm)} sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                    {/* <List component="form" onSubmit={handleSubmit(submitForm)} sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                         {roles?.map(role =>
                             <ListItem key={role}>
                                 <ListItemAvatar>
@@ -118,7 +118,23 @@ export default function UsersWR() {
                         >
                             Edit
                         </LoadingButton>
-                    </List>
+                    </List> */}
+                    {roles?.map(role => <FormControlLabel
+                        key={role}
+                        label={role}
+                        {...register(role)}
+                        control={<Checkbox defaultChecked={user?.roles.includes(role)} />}
+                    />)}
+                    <LoadingButton
+                        loading={isSubmitting}
+                        disabled={!isValid}
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Edit
+                    </LoadingButton>
                 </Box>
             </Modal>
 

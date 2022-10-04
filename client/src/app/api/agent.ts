@@ -49,9 +49,15 @@ const Admin = {
     updateRole: (roleName: string, value: any) => request.put(`account/updaterole/${roleName}?updatedName=${value}`, {})
 }
 
+const Catalog = {
+    productList : (params: URLSearchParams) => request.get('products')
+}
+
+
 const agent = {
     Account,
-    Admin
+    Admin,
+    Catalog
 }
 
 export default agent;
