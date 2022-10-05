@@ -1,5 +1,6 @@
 //import { store } from './../store/configureStore';
 import axios, { AxiosResponse } from "axios";
+import { PaginatedResponse } from "../models/pagination";
 import { store } from "../store/configureStore";
 
 
@@ -12,6 +13,15 @@ axios.interceptors.request.use(config => {
     const token = store.getState().account.user?.token;
     if (token) config.headers!.Authorization = `Bearer ${token}`;
     return config;
+})
+
+axios.interceptors.response.use(async response => {
+    const pagination = response.headers['pagination'];
+    if (pagination) {
+        response.data = new PaginatedResponse(response.data, JSON.parse(pagination));
+        return response;
+    }
+    return response
 })
 
 
@@ -50,7 +60,10 @@ const Admin = {
 }
 
 const Catalog = {
-    productList : (params: URLSearchParams) => request.get('products')
+    productList : (params: URLSearchParams) => request.get('products',params),
+    productDetails: (id: number) => request.get(`products/${id}`),
+    supplierList: () => request.get('suppliers'),
+    categoryList: () => request.get('categories')
 }
 
 

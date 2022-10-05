@@ -12,3 +12,12 @@ export interface Product {
     categoryName: string;
     supplierName: string;
 }
+
+export interface ProductParams {
+    orderBy?: string;
+    searchTerm?: string;
+    categoryId?: number;
+    supplierId?: number;
+    pageNumber: number;
+    pageSize: number;
+}

@@ -33,6 +33,14 @@ namespace Application.Products
             public async Task<Result<PagedList<ProductDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var query = _context.Products.ProjectTo<ProductDto>(_mapper.ConfigurationProvider).AsQueryable();
+
+                query = request.Params.OrderBy switch
+                {
+                    "price" => query.OrderBy(p => p.UnitPrice),
+                    "priceDesc" => query.OrderByDescending(p => p.UnitPrice),
+                    _ => query.OrderBy(p => p.ProductName)
+                };
+
                 if (request.Params.Search != null)
                 {
                     query = query.Where(p => p.ProductName.ToLower().Contains(request.Params.Search.Trim().ToLower()));

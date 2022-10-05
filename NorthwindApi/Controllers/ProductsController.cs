@@ -17,7 +17,7 @@ namespace NorthwindApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductsController : BaseApiController
     {
         private readonly NorthwindContext _context;
         private readonly IMediator _mediator;
@@ -37,30 +37,26 @@ namespace NorthwindApi.Controllers
             //    return NotFound();
             //}
             //  return await _context.Products.ToListAsync();
-            var products = await _mediator.Send(new Query() { Params= param});
-            if (products == null)
-            {
-                return NotFound();
-            }
-            return Ok(products);
+            //var products = await _mediator.Send(new Query() { Params = param });
+            //if (products == null)
+            //{
+            //    return NotFound();
+            //}
+            //return Ok(products);
+            return HandlePagedResult(await Mediator.Send(new Query { Params = param }));
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<ProductDto>>> GetProduct(int id)
+        public async Task<IActionResult> GetProduct(int id)
         {
             //if (_context.Products == null)
             //{
             //    return NotFound();
             //}
             //  var product = await _context.Products.FindAsync(id);
-            var product = await _mediator.Send(new Application.Products.Detail.Query() { Id = id });
-            if (product == null)
-            {
-                return NotFound();
-            }
+            return HandleResult(await Mediator.Send(new Application.Products.Detail.Query() { Id = id }));
 
-            return product;
         }
 
         // PUT: api/Products/5
