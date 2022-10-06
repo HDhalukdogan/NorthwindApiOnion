@@ -1,4 +1,4 @@
-import React,{ useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Route, Routes } from "react-router-dom";
 import Login from '../../features/account/Login';
 import Register from '../../features/account/Register';
@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Roles from '../../features/admin/Roles';
 import UsersWR from '../../features/admin/UsersWR';
 import Catalog from '../../features/catalog/Catalog';
+import ProductDetails from '../../features/catalog/ProductDetails';
+import CategoryList from '../../features/catalog/CategoryList';
 function App() {
   const dispatch = useAppDispatch();
 
@@ -27,14 +29,13 @@ function App() {
   }, [initApp])
   return (
     <div className="App">
-      <Header/>
+      <Header />
       <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route
-          path="product"
-          element={<PrivateRoute roles={["admin"]} component={Catalog} />}
-        />
+        <Route path="/product" element={<Catalog />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/category" element={<CategoryList />} />
         <Route
           path="roles"
           element={<PrivateRoute roles={["admin"]} component={Roles} />}

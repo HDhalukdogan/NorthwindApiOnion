@@ -27,7 +27,7 @@ function getAxiosParams(productParams: ProductParams) {
     params.append('pageNumber', productParams.pageNumber.toString());
     params.append('pageSize', productParams.pageSize.toString());
     if (productParams.orderBy) params.append('orderBy', productParams.orderBy);
-    if (productParams.searchTerm) params.append('searchTerm', productParams.searchTerm);
+    if (productParams.search) params.append('search', productParams.search);
     if (productParams.categoryId) params.append('categoryId', productParams.categoryId.toString());
     if (productParams.supplierId) params.append('supplierId', productParams.supplierId.toString());
     return params;
@@ -84,7 +84,7 @@ export const fetchSuppliersAsync = createAsyncThunk<Supplier[], void, {state: Ro
 function initParams() {
     return {
         pageNumber: 1,
-        pageSize: 6,
+        pageSize: 9,
         orderBy: 'name',
     }
 }
@@ -114,6 +114,7 @@ export const catalogSlice = createSlice({
             state.pagination = action.payload;
         },
         resetProductParams: (state) => {
+            state.productsLoaded = false;
             state.productParams = initParams();
         },
         setProduct: (state, action) => {
