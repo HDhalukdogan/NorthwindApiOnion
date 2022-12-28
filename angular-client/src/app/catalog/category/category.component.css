@@ -1,0 +1,11 @@
+li.nav a {
+    color: white !important;
+    text-decoration: none;
+}
+
+.nav-link{
+    color: aliceblue;
+    cursor: pointer;
+
+}
+

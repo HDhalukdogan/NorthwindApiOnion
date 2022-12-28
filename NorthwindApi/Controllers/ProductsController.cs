@@ -6,6 +6,7 @@ using Application.Core;
 using Application.Products;
 using Domain;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ namespace NorthwindApi.Controllers
         }
 
         // GET: api/Products
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] ProductParams param)
         {
