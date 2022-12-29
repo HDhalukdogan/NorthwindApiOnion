@@ -1,1 +1,13 @@
-<p>product-item works!</p>
+<div class="card h-100 shadow-sm">
+    <div class="image position-relative" style="cursor: pointer;">
+        <h1>{{product.productName}}</h1>
+        <div class="d-flex align-items-center justify-content-center hover-overlay">
+            <button routerLink="/catalog/{{product.productId}}" type="button" class="btn btn-primary">View</button>
+        </div>
+    </div>
+    <div class="card-body d-flex flex-column">
+        <a routerLink="/catalog/{{product.id}}" class="text-decoration-none">
+            <h6 class="text-uppercase">{{product.productName}}</h6>
+        </a>
+    </div>
+</div>

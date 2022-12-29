@@ -11,6 +11,7 @@ export class CategoryComponent implements OnInit {
   categories: any = [];
   selectedCategory: any = {};
   form: FormGroup;
+  editToggle = true
 
 
   constructor(private catalogService: CatalogService, private fb: FormBuilder) {
@@ -76,5 +77,9 @@ export class CategoryComponent implements OnInit {
     console.log('this.form.value', this.form.value)
     this.form.reset();
     this.onSelectAllChange(false)
+  }
+
+  edit(){
+    this.editToggle = !this.editToggle
   }
 }

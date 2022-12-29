@@ -24,27 +24,46 @@
 
     </div>
 
-    <div class="col-8 d-flex">
+    <div class="col-8">
         <div class="card mt-5" *ngIf="selectedCategory">
-            <div class="card-title text-center">{{selectedCategory.categoryName}}</div>
-            <div class="card-content">
-                <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-                    <label>
-                        <input type="checkbox" (change)="onSelectAllChange($event.target.checked)" />
-                        Select All
-                    </label>
-                    <div *ngFor="let item of selectedCategory.products; let i=index">
-                        {{i}}
-                        <label>
-                            <input [defaultChecked]="form.controls['checkArray'].value.includes(item.productId)"
-                                type="checkbox" (change)="onCheckboxChange($event)"
-                                [value]="item.productId" />{{item.productName}}
-                        </label>
+            <div class="d-flex justify-content-between card-title text-center">
+                <h1>
+                    {{selectedCategory.categoryName}}
+                </h1>
+                <button *ngIf="editToggle" class="btn btn-warning" (click)="edit()">Edit</button>
+                <button *ngIf="!editToggle" class="btn btn-danger" (click)="edit()">Cancel</button>
+            </div>
+            <div class="card-content  d-flex justify-content-between align-items-center pb-2">
+
+
+                <div *ngIf="editToggle" class="row">
+                    <div class="col-4 mb-4" *ngFor="let item of selectedCategory.products; let i=index">
+                        <app-product-item [product]="item"></app-product-item>
                     </div>
-                    <p class="error" *ngIf="form.controls['checkArray'].errors?.['required']">
-                        Checkbox is required, select atleast one value.
-                    </p>
-                    <input [disabled]="!form.valid" type="submit" value="Submit">
+                </div>
+
+
+                <form *ngIf="!editToggle" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+                    <div class="row">
+                        <label class="mb-2">
+                            <input class="form-check-input" type="checkbox"
+                                (change)="onSelectAllChange($event.target.checked)" />
+                            Select All
+                        </label>
+                        <div class="col-4 mb-4" *ngFor="let item of selectedCategory.products; let i=index">
+                            <div class="card">
+                                <input class="form-check-input"
+                                    [defaultChecked]="form.controls['checkArray'].value.includes(item.productId)"
+                                    type="checkbox" (change)="onCheckboxChange($event)" [value]="item.productId" />
+                                <app-product-item [product]="item"></app-product-item>
+                            </div>
+
+                        </div>
+                        <p class="error" *ngIf="form.controls['checkArray'].errors?.['required']">
+                            Checkbox is required, select atleast one value.
+                        </p>
+                        <input class="btn btn-outline-primary" [disabled]="!form.valid" type="submit" value="Submit">
+                    </div>
                 </form>
             </div>
 
