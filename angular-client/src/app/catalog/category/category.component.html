@@ -1,63 +1,51 @@
-<!-- <div class="container">
-    <ng-container *ngIf="categories.length > 0">
-        <ul *ngFor="let item of categories">
-            <li>{{item.categoryName}}</li>
-        </ul>
-    </ng-container>
-
-    <div>
-        <label>Select a category</label>
-        <select [(ngModel)]="selectedOption" (click)="getCategory()">
-            <option *ngFor="let option of categories" [value]="option.categoryId">{{ option.categoryName }}</option>
-        </select>
-        <h2>{{selectedOption}}</h2>
-    </div>
-    <div class="card mt-5" *ngIf="selectedCategory">
-        <div class="card-title text-center">{{selectedCategory.categoryName}}</div>
-        <div class="card-content">
-            <ul *ngFor="let item of selectedCategory.products">
-                <li><a routerLink="/catalog/{{item.productId}}">{{item.productName}}</a> </li>
-            </ul>
-        </div>
-
-    </div>
-
-</div> -->
 <div class="row">
+    <div class="col-4 d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+        style="width: 280px; height: fit-content;">
+        <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <svg class="bi me-2" width="40" height="32">
+                <use xlink:href="#bootstrap" />
+            </svg>
+            <span class="fs-4">Categories</span>
+        </a>
+        <hr>
+        <ul *ngFor="let item of categories" class="nav nav-pills flex-column">
 
+            <li class="nav-item">
+                <a (click)="getProducts(item.categoryId)"
+                    [ngClass]="selectedCategory.categoryId == item.categoryId ? 'active nav-link' : 'nav-link'"
+                    aria-current="page">
+                    <svg class="bi me-2" width="16" height="16">
+                        <use xlink:href="#home" />
+                    </svg>
+                    {{item.categoryName}}
+                </a>
+            </li>
+        </ul>
 
-        <div class="col-4 d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-            <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                <svg class="bi me-2" width="40" height="32">
-                    <use xlink:href="#bootstrap" />
-                </svg>
-                <span class="fs-4">Categories</span>
-            </a>
-            <hr>
-            <ul *ngFor="let item of categories" class="nav nav-pills flex-column mb-auto">
-
-                <li class="nav-item">
-                    <a (click)="getProducts(item.categoryId)"
-                        [ngClass]="selectedCategory.categoryId == item.categoryId ? 'active nav-link' : 'nav-link'"
-                        aria-current="page">
-                        <svg class="bi me-2" width="16" height="16">
-                            <use xlink:href="#home" />
-                        </svg>
-                        {{item.categoryName}}
-                    </a>
-                </li>
-            </ul>
-
-        </div>
-
+    </div>
 
     <div class="col-8 d-flex">
         <div class="card mt-5" *ngIf="selectedCategory">
             <div class="card-title text-center">{{selectedCategory.categoryName}}</div>
             <div class="card-content">
-                <ul *ngFor="let item of selectedCategory.products">
-                    <li><a routerLink="/catalog/{{item.productId}}">{{item.productName}}</a> </li>
-                </ul>
+                <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+                    <label>
+                        <input type="checkbox" (change)="onSelectAllChange($event.target.checked)" />
+                        Select All
+                    </label>
+                    <div *ngFor="let item of selectedCategory.products; let i=index">
+                        {{i}}
+                        <label>
+                            <input [defaultChecked]="form.controls['checkArray'].value.includes(item.productId)"
+                                type="checkbox" (change)="onCheckboxChange($event)"
+                                [value]="item.productId" />{{item.productName}}
+                        </label>
+                    </div>
+                    <p class="error" *ngIf="form.controls['checkArray'].errors?.['required']">
+                        Checkbox is required, select atleast one value.
+                    </p>
+                    <input [disabled]="!form.valid" type="submit" value="Submit">
+                </form>
             </div>
 
         </div>
