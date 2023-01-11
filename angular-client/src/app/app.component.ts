@@ -21,7 +21,12 @@ export class AppComponent implements OnInit {
     const user:IUser = JSON.parse(localStorage.getItem('user'));
       this.accountService.setCurrentUser(user).subscribe({
         next: ()=> {console.log('user loaded')},
-        error: (e) => {console.log(e)}
+        error: (e) => {
+          console.log(e)
+          if (user) {
+            this.accountService.logout();
+          }
+        }
       });
   }
 

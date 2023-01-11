@@ -6,6 +6,8 @@
   <nav class="my-2 my-md-0 me-md-3 text-uppercase" style="font-size: larger;">
     <a class="p-2" routerLink="/catalog" routerLinkActive="active">Catalog</a>
     <a *appHasRole='["admin"]' class="p-2" routerLink="/catalog/category" routerLinkActive="active"  [routerLinkActiveOptions]="{exact: true}">Category</a>
+    <a *appHasRole='["admin"]'  class="p-2" routerLink="/admin" routerLinkActive="active">Admin</a>
+
   </nav>
   <div class="d-flex align-item-center">
 
