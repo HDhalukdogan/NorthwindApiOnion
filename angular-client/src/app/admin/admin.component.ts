@@ -4,6 +4,7 @@ import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { trLocale } from 'ngx-bootstrap/locale';
 import { defineLocale, listLocales } from 'ngx-bootstrap/chronos';
+import { FileService } from '../core/services/file.service';
 defineLocale('tr', trLocale);
 
 interface IItemObject {
@@ -24,6 +25,10 @@ export class AdminComponent implements OnInit {
     startDate: new FormControl("", Validators.required)
   })
   locales = listLocales()
+  response: {dbPath: ''};
+  photos: string[] = [];
+
+
   itemObjectsLeft: IItemObject[] = [
     { id: 1, name: 'Windstorm' },
     { id: 2, name: 'Bombasto' },
@@ -75,10 +80,23 @@ export class AdminComponent implements OnInit {
 
 
 
-  constructor(private modalService: BsModalService, private bsLocalService: BsLocaleService) {
+  constructor(private modalService: BsModalService, private bsLocalService: BsLocaleService, private fileService: FileService) {
     this.bsLocalService.use('tr')
   }
   ngOnInit(): void {
+    this.getPhotos()
+  }
+
+  private getPhotos = () => {
+    this.fileService.getPhotos()
+    .subscribe(data => this.photos = data['photos'])
+  }
+  uploadFinished = (event) => { 
+    this.response = event; 
+    this.getPhotos();
+  }
+  public createImgPath = (serverPath: string) => { 
+    return `http://localhost:5011/${serverPath}`; 
   }
 
   openModal(template: TemplateRef<any>) {

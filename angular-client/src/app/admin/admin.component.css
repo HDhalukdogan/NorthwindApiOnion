@@ -1,0 +1,18 @@
+.UpDown{
+    width: 700px;
+    border: 1px solid rgb(206, 195, 195);;
+    margin: 10px auto;
+    padding: 10px;
+    box-shadow: 1px 1px 1px gray;
+  }
+  
+  article section h2{
+    text-align: center;
+  }
+  
+  .photos {
+    margin-top: 20px;
+  }
+  .photo {
+    margin-bottom: 5px;
+  }

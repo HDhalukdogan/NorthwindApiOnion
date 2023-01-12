@@ -148,6 +148,24 @@
                 </div>
             </div>
         </div>
+
+
+
+        <article class="container mt-5">
+            <section class="UpDown">
+                <app-upload (onUploadFinished)="uploadFinished($event)"></app-upload>
+                <div class="photos" *ngIf="photos.length > 0">
+                    <h2>Available photos</h2>
+                    <div *ngFor="let photo of photos" class="photo">
+                        <img [src]="createImgPath(photo)" style="width:60px; height:60px;">
+                        <app-download [fileUrl]="photo"></app-download>
+                    </div>
+                </div>
+            </section>
+        </article>
+
+
+
     </div>
 
 

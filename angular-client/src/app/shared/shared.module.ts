@@ -7,12 +7,16 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { SortableModule } from 'ngx-bootstrap/sortable';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { StepperComponent } from './components/stepper/stepper.component';
+import { UploadComponent } from './components/upload/upload.component';
+import { DownloadComponent } from './components/download/download.component';
 
 
 
 @NgModule({
   declarations: [
-    StepperComponent
+    StepperComponent,
+    UploadComponent,
+    DownloadComponent
   ],
   imports: [
     CommonModule,
@@ -32,6 +36,8 @@ import { StepperComponent } from './components/stepper/stepper.component';
     FormsModule,
     StepperComponent,
     SortableModule,
+    UploadComponent,
+    DownloadComponent,
     CarouselModule
   ]
 })
