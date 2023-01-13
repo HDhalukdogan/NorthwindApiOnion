@@ -222,5 +222,10 @@ namespace NorthwindApi.Controllers
         {
             return await _userManager.Users.ToListAsync();
         }
+        [HttpGet("getAllUserExcel")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsersAsyncExcel()
+        {
+            return await _userManager.Users.ToListAsync();
+        }
     }
 }

@@ -56,6 +56,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
    });
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<FileService>();
 
 builder.Services.AddMediatR(typeof(Application.Products.List.Handler));
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);

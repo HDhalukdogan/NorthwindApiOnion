@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using NorthwindApi.Services;
 using System.Net.Http.Headers;
 
 namespace NorthwindApi.Controllers
@@ -9,6 +10,13 @@ namespace NorthwindApi.Controllers
     [ApiController]
     public class FilesController : ControllerBase
     {
+        private readonly FileService _fileService;
+
+        public FilesController(FileService fileService)
+        {
+            _fileService = fileService;
+        }
+
         [HttpPost, DisableRequestSizeLimit]
         [Route("upload")]
         public async Task<IActionResult> Upload()
@@ -17,17 +25,11 @@ namespace NorthwindApi.Controllers
             {
                 var formCollection = await Request.ReadFormAsync();
                 var file = formCollection.Files.First();
-                var folderName = Path.Combine("Resources", "Images");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
                 if (file.Length > 0)
                 {
-                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(pathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
+                    var dbPath = await _fileService.UploadFile(file);
+ 
                     return Ok(new { dbPath });
                 }
                 else
@@ -50,14 +52,9 @@ namespace NorthwindApi.Controllers
             if (!System.IO.File.Exists(filePath))
                 return NotFound();
 
-            var memory = new MemoryStream();
-            await using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
+            var downloadedData = await _fileService.DownLoadFile(filePath);
 
-            return File(memory, GetContentType(filePath), filePath);
+            return File(downloadedData.Item1,downloadedData.Item2, filePath);
         }
 
         [HttpGet, DisableRequestSizeLimit]
@@ -66,11 +63,7 @@ namespace NorthwindApi.Controllers
         {
             try
             {
-                var folderName = Path.Combine("Resources", "Images");
-                var pathToRead = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                var photos = Directory.EnumerateFiles(pathToRead)
-                    .Where(IsAPhotoFile)
-                    .Select(fullPath => Path.Combine(folderName, Path.GetFileName(fullPath)));
+                var photos = _fileService.GetPhotoUrls();
 
                 return Ok(new { photos });
             }
@@ -78,26 +71,6 @@ namespace NorthwindApi.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex}");
             }
-        }
-
-        private bool IsAPhotoFile(string fileName)
-        {
-            return fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                   || fileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)
-                   || fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private string GetContentType(string path)
-        {
-            var provider = new FileExtensionContentTypeProvider();
-            string contentType;
-
-            if (!provider.TryGetContentType(path, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-
-            return contentType;
         }
     }
 }
