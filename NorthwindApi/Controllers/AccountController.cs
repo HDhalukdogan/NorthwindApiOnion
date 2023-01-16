@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using ClosedXML.Excel;
+using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -92,7 +93,7 @@ namespace NorthwindApi.Controllers
             return StatusCode(201);
         }
         [HttpPut("updaterole/{roleName}")]
-        public async Task<IActionResult> UpdateRole(string roleName,string updatedName)
+        public async Task<IActionResult> UpdateRole(string roleName, string updatedName)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
             if (role == null)
@@ -223,9 +224,28 @@ namespace NorthwindApi.Controllers
             return await _userManager.Users.ToListAsync();
         }
         [HttpGet("getAllUserExcel")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsersAsyncExcel()
+        public async Task<ActionResult> GetUsersAsyncExcel()
         {
-            return await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users.ToListAsync();
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Users");
+            var currentRow = 1;
+            worksheet.Cell(currentRow, 1).Value = "UserId";
+            worksheet.Cell(currentRow, 2).Value = "UserName";
+            worksheet.Row(1).CellsUsed().Style.Fill.SetBackgroundColor(XLColor.LightGray);
+            users.ForEach(user =>
+            {
+                currentRow++;
+                worksheet.Cell(currentRow, 1).Value = user.Id;
+                worksheet.Cell(currentRow, 2).Value = user.UserName;
+
+            });
+            worksheet.Columns().AdjustToContents();
+            worksheet.Columns().Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            var content = stream.ToArray();
+            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Users.xlsx");
         }
     }
 }

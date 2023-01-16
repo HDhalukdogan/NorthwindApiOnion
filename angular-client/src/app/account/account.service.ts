@@ -80,5 +80,12 @@ export class AccountService {
     return roles;
   }
 
+  getAllUsersExcel () {
+    return this.http.get(this.baseUrl + 'Account/getAllUserExcel', {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'blob'
+    })
+  }
 
 }

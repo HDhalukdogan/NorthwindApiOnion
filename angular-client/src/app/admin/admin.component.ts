@@ -5,6 +5,8 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { trLocale } from 'ngx-bootstrap/locale';
 import { defineLocale, listLocales } from 'ngx-bootstrap/chronos';
 import { FileService } from '../core/services/file.service';
+import { AccountService } from '../account/account.service';
+import { HttpEventType } from '@angular/common/http';
 defineLocale('tr', trLocale);
 
 interface IItemObject {
@@ -25,7 +27,7 @@ export class AdminComponent implements OnInit {
     startDate: new FormControl("", Validators.required)
   })
   locales = listLocales()
-  response: {dbPath: ''};
+  response: { dbPath: '' };
   photos: string[] = [];
 
 
@@ -80,7 +82,7 @@ export class AdminComponent implements OnInit {
 
 
 
-  constructor(private modalService: BsModalService, private bsLocalService: BsLocaleService, private fileService: FileService) {
+  constructor(private modalService: BsModalService, private bsLocalService: BsLocaleService, private fileService: FileService, private accountService: AccountService) {
     this.bsLocalService.use('tr')
   }
   ngOnInit(): void {
@@ -89,14 +91,14 @@ export class AdminComponent implements OnInit {
 
   private getPhotos = () => {
     this.fileService.getPhotos()
-    .subscribe(data => this.photos = data['photos'])
+      .subscribe(data => this.photos = data['photos'])
   }
-  uploadFinished = (event) => { 
-    this.response = event; 
+  uploadFinished = (event) => {
+    this.response = event;
     this.getPhotos();
   }
-  public createImgPath = (serverPath: string) => { 
-    return `http://localhost:5011/${serverPath}`; 
+  public createImgPath = (serverPath: string) => {
+    return `http://localhost:5011/${serverPath}`;
   }
 
   openModal(template: TemplateRef<any>) {
@@ -116,5 +118,21 @@ export class AdminComponent implements OnInit {
     this.modalRef?.hide();
   }
 
+  getAllUserExcel() {
+    this.accountService.getAllUsersExcel().subscribe((event) => {
+      if (event.type === HttpEventType.Response) {
+        this.message = 'Download success.';
+        const downloadedFile = new Blob([event.body], { type: event.body.type });
+        const a = document.createElement('a');
+        a.setAttribute('style', 'display:none;');
+        document.body.appendChild(a);
+        a.download = "Users.xlsx";
+        a.href = URL.createObjectURL(downloadedFile);
+        a.target = '_blank';
+        a.click();
+        document.body.removeChild(a);
+      }
+    })
+  }
 
 }
