@@ -23,8 +23,8 @@ export default function UsersWR() {
     const [users, setUsers] = useState<UserWithRoles[] | null>(null);
     const [user, setUser] = useState<UserWithRoles | null>(null)
     const [roles, setRoles] = useState<string[] | null>(null);
-    const [open, setOpen] = React.useState(false);
-    const { register, handleSubmit, formState: { isSubmitting, errors, isValid } } = useForm({
+    const [open, setOpen] = useState(false);
+    const { register, handleSubmit, formState: { isSubmitting, errors, isValid }, reset } = useForm({
         mode: 'all'
     });
 
@@ -40,14 +40,15 @@ export default function UsersWR() {
     useEffect(() => {
         agent.Admin.usersWithRoles().then(response => setUsers(response)).catch(error => console.log(error));
         agent.Admin.roles().then(response => setRoles(response)).catch(error => console.log(error));
-    }, [open, user])
+    }, [user])
 
-    const submitForm = async (data: FieldValues) => {
+    const submitForm = (data: FieldValues) => {
         console.log('data', data)
         let newData = Object.entries(data).filter(s => s[1] === true).map(r => r[0])
 
-        await agent.Admin.editRoles(user!.username, newData).then(() => {
+        agent.Admin.editRoles(user!.username, newData).then(() => {
             handleClose();
+            reset()
         })
         console.log('data', data)
     }
