@@ -1,18 +1,10 @@
-import React, { useCallback, useEffect } from 'react';
-import { Route, Routes } from "react-router-dom";
-import Login from '../../features/account/Login';
-import Register from '../../features/account/Register';
+import { useCallback, useEffect } from 'react';
+import { Outlet } from "react-router-dom";
 import Header from './Header';
 import { useAppDispatch } from "../store/configureStore";
 import { fetchCurrentUser } from "../../features/account/accountSlice";
-import { PrivateRoute } from './PrivateRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Roles from '../../features/admin/Roles';
-import UsersWR from '../../features/admin/UsersWR';
-import Catalog from '../../features/catalog/Catalog';
-import ProductDetails from '../../features/catalog/ProductDetails';
-import CategoryList from '../../features/catalog/CategoryList';
 function App() {
   const dispatch = useAppDispatch();
 
@@ -30,7 +22,8 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <Routes>
+      <Outlet/>
+      {/* <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path="/product" element={<Catalog />} />
@@ -44,7 +37,7 @@ function App() {
           path="users"
           element={<PrivateRoute roles={["admin"]} component={UsersWR} />}
         />
-      </Routes>
+      </Routes> */}
       <ToastContainer position='bottom-right' hideProgressBar theme='colored' />
     </div>
   );

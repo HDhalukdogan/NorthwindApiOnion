@@ -52,14 +52,13 @@ export default function Header() {
                             {title.toUpperCase()}
                         </ListItem>
                     ))}
-                    {user && user.roles?.includes('admin') &&
-                        <ListItem
-                            component={NavLink}
-                            to={'/product'}
-                            sx={navStyles}
-                        >
-                            INVENTORY
-                        </ListItem>}
+                    <ListItem
+                        component={NavLink}
+                        to={'/product'}
+                        sx={navStyles}
+                    >
+                        INVENTORY
+                    </ListItem>
                     {user && user.roles?.includes('admin') &&
                         <ListItem
                             component={NavLink}
