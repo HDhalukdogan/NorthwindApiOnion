@@ -25,7 +25,10 @@ export default function UsersWR() {
     const [roles, setRoles] = useState<string[] | null>(null);
     const [open, setOpen] = useState(false);
     const { register, handleSubmit, formState: { isSubmitting, errors, isValid }, reset } = useForm({
-        mode: 'all'
+        mode: 'all',
+        defaultValues: {
+            checkbox: []
+        }
     });
 
 
@@ -44,13 +47,16 @@ export default function UsersWR() {
 
     const submitForm = (data: FieldValues) => {
         console.log('data', data)
-        let newData = Object.entries(data).filter(s => s[1] === true).map(r => r[0])
+        // let newData = Object.entries(data).filter(s => s[1] === true).map(r => r[0])
 
-        agent.Admin.editRoles(user!.username, newData).then(() => {
+        // agent.Admin.editRoles(user!.username, newData).then(() => {
+        //     handleClose();
+        //     reset()
+        // })
+        agent.Admin.editRoles(user!.username, data.checkbox).then(() => {
             handleClose();
             reset()
         })
-        console.log('data', data)
     }
 
     if (!users) {
@@ -120,11 +126,16 @@ export default function UsersWR() {
                             Edit
                         </LoadingButton>
                     </List> */}
-                    {roles?.map(role => <FormControlLabel
+                    {/* {roles?.map(role => <FormControlLabel
                         key={role}
                         label={role}
                         {...register(role)}
                         control={<Checkbox defaultChecked={user?.roles.includes(role)} />}
+                    />)} */}
+                    {roles?.map(role => <FormControlLabel
+                        key={role}
+                        label={role}
+                        control={<Checkbox defaultChecked={user?.roles.includes(role)} value={role} {...register("checkbox")} />}
                     />)}
                     <LoadingButton
                         loading={isSubmitting}
