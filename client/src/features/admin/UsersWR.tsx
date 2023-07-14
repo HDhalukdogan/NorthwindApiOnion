@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Table, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Modal, Box, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, FormControlLabel } from '@mui/material';
-import ImageIcon from '@mui/icons-material/Image';
+import { useEffect, useState } from 'react'
+import { Table, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Modal, Box, Typography, FormControlLabel } from '@mui/material';
 import agent from '../../app/api/agent'
 import { UserWithRoles } from '../../app/models/usersWithRoles';
 import { Checkbox } from "@material-ui/core";
@@ -44,7 +43,9 @@ export default function UsersWR() {
         agent.Admin.usersWithRoles().then(response => setUsers(response)).catch(error => console.log(error));
         agent.Admin.roles().then(response => setRoles(response)).catch(error => console.log(error));
     }, [user])
-
+    const downloadUsers = () => {
+        agent.Admin.getAllUsersExcel();
+    }
     const submitForm = (data: FieldValues) => {
         console.log('data', data)
         // let newData = Object.entries(data).filter(s => s[1] === true).map(r => r[0])
@@ -64,6 +65,7 @@ export default function UsersWR() {
     }
     return (
         <>
+        <Button variant='contained' color='success' onClick={downloadUsers}>Users Excel</Button>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>

@@ -56,7 +56,17 @@ const Admin = {
     deleteRole: (value: any) => request.delete(`account/deleterole/${value}`),
     removeUserFromRoles: (username: string, value: any) => request.post(`account/remove-role-user/${username}?role=${value}`, {}),
     editRoles: (username: string, value: any) => request.post(`account/edit-roles/${username}?roles=${value}`, {}),
-    updateRole: (roleName: string, value: any) => request.put(`account/updaterole/${roleName}?updatedName=${value}`, {})
+    updateRole: (roleName: string, value: any) => request.put(`account/updaterole/${roleName}?updatedName=${value}`, {}),
+    getAllUsersExcel: () => axios.get('Account/getAllUserExcel', { responseType: 'blob' }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        console.log('response.data', response.data)
+        link.setAttribute('download', 'abc.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    })
 }
 
 const Catalog = {
